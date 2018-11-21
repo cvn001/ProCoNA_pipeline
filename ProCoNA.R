@@ -30,10 +30,7 @@ textSize <- 0.7        # set text size in heat map
 title <- "Heatmap of correlation between modules & phenotypes" # heatmap title
 plotName <- "heatmap.pdf"
 
-
 #dim(peptideData)   # the dimension peptideData
-
-
 #----- choose the softthreshold beta ----------------------#
 # set the candidate soft threshold
 powers <- c(c(1:10), seq(from=12, to=20, by=2))
