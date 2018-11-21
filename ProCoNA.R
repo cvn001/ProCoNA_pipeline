@@ -1,16 +1,25 @@
 library(ProCoNA)
 
 
-subsetModCors <- function
+subsetModCors <- function (modCors, modules) {
 ### subsets the module-phenotype correlation matrix which has funny rownames
-(modCors,  ##<< The matrix of module-phenotype correlations
- modules   ##<< Which modules are desired.
-) {
+##<< The matrix of module-phenotype correlations
+##<< Which modules are desired.
   rows <- rownames(modCors)  # like ME3
   ms <- sapply(modules, function(x) paste("ME", x, sep=""))
   modCors[which(rows %in% ms),]
 }
 
+# definde a function to output particular modules info
+moduleData <- function(pepnet, pepcors, module, pepinfo, fileprefix) {
+  moduleX <- peptides(pepnet)[which(mergedColors(pepnet)==module)]
+  moduleInfo <- pepinfo[which(pepinfo$Mass_Tag_ID %in% moduleX),]
+  moduleCors <- pepcors[which(pepcors$Module==module),]
+  corname <- paste(fileprefix, "_correlations.csv", sep="")
+  write.table(moduleCors, file=corname, sep=",", row.names=F)
+  infoname <- paste(fileprefix, "_peptide_info.csv", sep="")
+  write.table(moduleInfo, file=infoname, sep=",", row.names=F)
+}
 
 data(ProCoNA_Data)  # import the example data (rows = samples; column = peptides(proteins))
 peptideData <- subsetPeptideData(peptideData, percentageNAsAllowed=0.2)
@@ -110,17 +119,6 @@ if(!is.null(plotName)) {
 pepcor <- moduleMemberCorrelations(pnet=peptideNetwork,
                                    pepdat=peptideData,
                                    phenotypes=phenotypes)
-
-# definde a function to output particular modules info
-moduleData <- function(pepnet, pepcors, module, pepinfo, fileprefix) {
-  moduleX <- peptides(pepnet)[which(mergedColors(pepnet)==module)]
-  moduleInfo <- pepinfo[which(pepinfo$Mass_Tag_ID %in% moduleX),]
-  moduleCors <- pepcors[which(pepcors$Module==module),]
-  corname <- paste(fileprefix, "_correlations.csv", sep="")
-  write.table(moduleCors, file=corname, sep=",", row.names=F)
-  infoname <- paste(fileprefix, "_peptide_info.csv", sep="")
-  write.table(moduleInfo, file=infoname, sep=",", row.names=F)
-}
 
 for (i in 0:max(pepcor$Module)) {
   moduleData(peptideNetwork, pepcor, i, masstagdb, paste("Module_",as.numeric(i)))
