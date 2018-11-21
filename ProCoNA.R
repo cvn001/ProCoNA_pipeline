@@ -76,7 +76,7 @@ net <- peptideNetwork
 pdf("treegraph.pdf")
 plotNet(peptideNetwork) 
 dev.off()
-
+# 
 if (nrow(phenotypes) != nrow(mergedMEs(net))) {
   stop("Net must have merged eigenvectors with dimensions matching the phenotype data! See mergedMEs(net).")
 }
